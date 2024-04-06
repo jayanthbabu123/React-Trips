@@ -2,7 +2,6 @@ import React from "react";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faDashboard,
-  faHome,
   faHouse,
   faUser,
 } from "@fortawesome/free-solid-svg-icons";
