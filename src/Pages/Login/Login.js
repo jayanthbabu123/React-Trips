@@ -20,7 +20,7 @@ function Login() {
     event.preventDefault();
     console.log(loginData);
     axios
-      .post(`${process.env.REACT_APP_API_URL}/api/users/login`, loginData)
+      .post(`http://localhost:5000/api/users/login`, loginData)
       .then((response) => {
         console.log(response.data);
           navigate('/dashboard');

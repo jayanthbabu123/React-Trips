@@ -8,11 +8,10 @@ function Dashboard() {
   const [searchText, setSearchText] = useState("");
   const [isLoading, setIsLoading] = useState(true);
   useEffect(() => {
-    console.log(process.env.REACT_APP_API_URL);
     const fetchTrips = async () => {
       try {
         const response = await axios.get(
-          `${process.env.REACT_APP_API_URL}/api/places`
+          `http://localhost:5000/api/places`
         );
         setTrips(response.data);
         setTripsCopy(response.data);
