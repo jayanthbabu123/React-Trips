@@ -1,18 +1,21 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { Badge, Button, Card, Spinner } from "react-bootstrap";
+import { Badge, Button, Card, Modal, Spinner } from "react-bootstrap";
 import styles from "./Dashboard.module.css";
 function Dashboard() {
   const [trips, setTrips] = useState([]);
   const [tripsCopy, setTripsCopy] = useState([]);
   const [searchText, setSearchText] = useState("");
   const [isLoading, setIsLoading] = useState(true);
+  const [show, setShow] = useState(false);
+  const [selectedTrip, setSelectedTrip] = useState({});
+  const [numPersons, setNumPersons] = useState(1);
+  const [startDate, setStartDate] = useState("");
+  const [endDate, setEndDate] = useState("");
   useEffect(() => {
     const fetchTrips = async () => {
       try {
-        const response = await axios.get(
-          `http://localhost:5000/api/places`
-        );
+        const response = await axios.get(`http://localhost:5000/api/places`);
         setTrips(response.data);
         setTripsCopy(response.data);
         setIsLoading(false);
@@ -37,7 +40,26 @@ function Dashboard() {
     setTrips(filteredTrips);
     setSearchText(event.target.value);
   };
-  
+
+  const handleClose = () => {
+    setNumPersons(1);
+    setShow(false);
+  };
+  const openModal = (trip) => {
+    console.log(trip);
+    setSelectedTrip(trip);
+    setShow(true);
+  };
+  // const handleDeleteAllPlcesinDB = () => {
+  //   axios
+  //     .delete(`http://localhost:5000/api/places`)
+  //     .then((response) => {
+  //       console.log(response.data);
+  //     })
+  //     .catch((err) => {
+  //       console.log(err);
+  //     });
+  // };
   return (
     <div>
       <div className="row">
@@ -101,7 +123,11 @@ function Dashboard() {
                       <Badge bg="success">{trip.city}</Badge>
                     </div>
                     <div className="col-md-6 text-end">
-                      <Button variant="primary" size="sm">
+                      <Button
+                        variant="primary"
+                        size="sm"
+                        onClick={() => openModal(trip)}
+                      >
                         Book Now
                       </Button>
                     </div>
@@ -119,6 +145,81 @@ function Dashboard() {
           </div>
         )}
       </div>
+      <Modal show={show} onHide={handleClose} size="lg" centered>
+        <Modal.Header closeButton>
+          <Modal.Title>{selectedTrip.name}</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <div className="row">
+            <div className="col-md-12">
+              <img
+                className="w-100"
+                style={{ height: "300px" }}
+                src={selectedTrip.imageUrl}
+                alt={selectedTrip.name}
+              />
+            </div>
+            <div className="col-md-12 mt-4">
+              <p>{selectedTrip.description}</p>
+            </div>
+            <div className="col-md-12">
+              <p>
+                <strong>Price:</strong>{" "}
+                <span className="text-primary">
+                  {" "}
+                  ${numPersons * selectedTrip.price}
+                </span>
+              </p>
+            </div>
+            <div className="col-md-6">
+              <div className="form-group">
+                <label>Number of Persons</label>
+                <input
+                  type="number"
+                  className="form-control"
+                  value={numPersons}
+                  onChange={(e) => setNumPersons(e.target.value)}
+                />
+              </div>
+            </div>
+            <div className="row">
+              <div className="col-md-6">
+                <div className="form-group">
+                  <label>Start Date</label>
+                  <input
+                    type="date"
+                    className="form-control"
+                    value={startDate}
+                    onChange={(e) => setStartDate(e.target.value)}
+                  />
+                </div>
+              </div>
+              <div className="col-md-6">
+                <div className="form-group">
+                  <label>End Date</label>
+                  <input
+                    type="date"
+                    className="form-control"
+                    value={endDate}
+                    onChange={(e) => setEndDate(e.target.value)}
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </Modal.Body>
+        <Modal.Footer>
+          <Button variant="secondary" onClick={handleClose}>
+            Close
+          </Button>
+          <Button variant="primary" onClick={handleClose}>
+            Save Changes
+          </Button>
+        </Modal.Footer>
+      </Modal>
+      {/* <button className="btn btn-primary" onClick={handleDeleteAllPlcesinDB}>
+        Delete All places
+      </button> */}
     </div>
   );
 }

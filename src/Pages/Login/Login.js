@@ -26,15 +26,20 @@ function Login() {
           navigate('/dashboard');
       })
       .catch((err) => {
-        console.log(err.response.data.message);
-        setErrorMessage(err.response.data.message);
+        console.log(err)
+        if(err.response){
+          setErrorMessage(err.response.data.message);
+        } else{
+          setErrorMessage(err.message)
+        }
+       
 
       });
   };
 
   return (
     <form>
-      <div className="container">
+      <div className="container mt-5">
         <div className="row">
           <div className="col-sm-9 col-md-7 col-lg-5 mx-auto">
             {fromSignup && <h6>You registered successfully, Please login</h6>}
