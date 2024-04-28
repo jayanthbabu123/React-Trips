@@ -6,26 +6,63 @@ import Login from "./Pages/Login/Login";
 import NotFound from "./Pages/NotFound/NotFound";
 import Profile from "./Pages/Profile/Profile";
 import SignUp from "./Pages/SignUp/SignUp";
-import UserContext from "./UserContext";
+import { UserProvider } from "./UserContext";
+import PrivateRoute from "./PrivateRoute";
+import PublicRoute from "./PublicRoute";
 const App = () => {
   return (
     <>
-      <UserContext.Provider value={"babu"}>
+      <UserProvider>
         <BrowserRouter>
-          <div >
+          <div>
             <Header />
             <Routes>
               <Route path="/" element={<Login />} />
-              <Route path="/home" element={<Home />} />
-              <Route path="/dashboard" element={<Dashboard />} />
-              <Route path="/login" element={<Login />} />
-              <Route path="/profile" element={<Profile />} />
-              <Route path="/signup" element={<SignUp />} />
+              <Route
+                path="/login"
+                element={
+                  <PublicRoute>
+                    <Login />
+                  </PublicRoute>
+                }
+              />
+              <Route
+                path="/signup"
+                element={
+                  <PublicRoute>
+                    <SignUp />
+                  </PublicRoute>
+                }
+              />
+              <Route
+                path="/home"
+                element={
+                  <PrivateRoute>
+                    <Home />
+                  </PrivateRoute>
+                }
+              />
+              <Route
+                path="/dashboard"
+                element={
+                  <PrivateRoute>
+                    <Dashboard />
+                  </PrivateRoute>
+                }
+              />
+              <Route
+                path="/profile"
+                element={
+                  <PrivateRoute>
+                    <Profile />
+                  </PrivateRoute>
+                }
+              />
               <Route path="*" element={<NotFound />} />
             </Routes>
           </div>
         </BrowserRouter>
-      </UserContext.Provider>
+      </UserProvider>
     </>
   );
 };

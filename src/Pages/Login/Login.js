@@ -1,15 +1,21 @@
 import axios from "axios";
-import React, { useState } from "react";
+import React, { useContext, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import { Button } from "../../Components/Button";
+import { faUser } from "@fortawesome/free-solid-svg-icons";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import UserContext from "../../UserContext";
 function Login() {
   const [loginData, setLoginData] = useState({
     email: "",
     password: "",
   });
   const [errorMessage, setErrorMessage] = useState("");
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   const location = useLocation();
   const fromSignup = location.state?.fromSignup || false;
+  const userContext = useContext(UserContext);
+  console.log(userContext);
 
   const handleInputChange = (event) => {
     const { name, value } = event.target;
@@ -23,17 +29,21 @@ function Login() {
       .post(`http://localhost:5000/api/users/login`, loginData)
       .then((response) => {
         console.log(response.data);
-          navigate('/dashboard');
+        localStorage.setItem("token", response.data.token);
+        localStorage.setItem("user", JSON.stringify(response.data.user));
+        userContext.setAuth({
+          token: response.data.token,
+          isAuthenticated: true,
+        });
+        navigate("/dashboard");
       })
       .catch((err) => {
-        console.log(err)
-        if(err.response){
+        console.log(err);
+        if (err.response) {
           setErrorMessage(err.response.data.message);
-        } else{
-          setErrorMessage(err.message)
+        } else {
+          setErrorMessage(err.message);
         }
-       
-
       });
   };
 
@@ -70,10 +80,17 @@ function Login() {
                 name="password"
               />
             </div>
-            <button className="btn btn-primary" disabled={!loginData.email || !loginData.password} onClick={handleSubmit}>
+            <button
+              className="btn btn-primary"
+              disabled={!loginData.email || !loginData.password}
+              onClick={handleSubmit}
+            >
               Login
             </button>
-            {errorMessage && <div className="alert alert-danger">{errorMessage}</div>}
+           
+            {errorMessage && (
+              <div className="alert alert-danger">{errorMessage}</div>
+            )}
           </div>
         </div>
       </div>
